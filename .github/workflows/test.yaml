@@ -9,7 +9,7 @@ jobs:
     name: Notify Slack on pushes
     runs-on: ubuntu-latest
     steps:
-      - uses: JayaBharatReddy-plivo/slack-action@test
+      - uses: JayaBharatReddy-plivo/SlackNotifTest@test
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
         with:
