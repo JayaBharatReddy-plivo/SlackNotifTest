@@ -23,14 +23,14 @@ jobs:
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_NOTIFICATIONS_TOKEN }}
         with:
-          payload: |
-            {
-              "text": "Pull Request changes:",
-              "attachments": [
+          {
+            'text': 'Pull Request changes:',
+            'attachments':
+              [
                 {
-                  "color": "#36a64f",
-                  "title": "Changes in settings.py",
-                  "text": "$(for changed_file in ${{ steps.files.outputs.all }}; do echo \"- ${changed_file}\"; done)"
-                }
-              ]
-            }
+                  'color': '#36a64f',
+                  'title': 'Changes in settings.py',
+                  'text': '$(for changed_file in ${{ steps.files.outputs.all }}; do echo "- ${changed_file}"; done)',
+                },
+              ],
+          }
