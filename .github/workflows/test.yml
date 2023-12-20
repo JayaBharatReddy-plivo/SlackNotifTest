@@ -1,18 +1,12 @@
-name: Notify  Slack on push
-on:
-  push:
-    branches:
-      - 'test'
-
+on: push
+name: Slack Notification Demo
 jobs:
-  notify_slack_push:
-    name: Notify Slack on pushes
+  slackNotification:
+    name: Slack Notification
     runs-on: ubuntu-latest
     steps:
-      - uses: JayaBharatReddy-plivo/SlackNotifTest@test
+      - uses: actions/checkout@v2
+      - name: Slack Notification
+        uses: rtCamp/action-slack-notify@v2
         env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-        with:
-          # message to send to slack
-          args: '{\"channel\":\"C0483SB96MV\",\"text\":\"Repositorypushed\"}'
-        if: success()
+          SLACK_WEBHOOK: ${{ secrets.SLACK_NOTIFICATIONS_TOKEN }}
