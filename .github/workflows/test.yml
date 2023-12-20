@@ -19,12 +19,22 @@ jobs:
             echo "Do something with this ${changed_file}."
           done
 
-      - name: Set changed files to SLACK_MESSAGE
+      - name: Check if settings.py is changed
         run: |
-          SLACK_MESSAGE=""
-          for changed_file in ${{ steps.files.outputs.all }}; do
-            SLACK_MESSAGE="${SLACK_MESSAGE}- ${changed_file}\n"
-          done
+          if echo "${{ steps.files.outputs.all }}" | grep -q "settings.py"; then
+            SETTINGS_CHANGED=true
+          else
+            SETTINGS_CHANGED=false
+          fi
+          echo "SETTINGS_CHANGED=${SETTINGS_CHANGED}" >> $GITHUB_ENV
+
+      - name: Set Slack message based on changes
+        run: |
+          if [ "${{ env.SETTINGS_CHANGED }}" = "true" ]; then
+            SLACK_MESSAGE="Settings.py file has been changed."
+          else
+            SLACK_MESSAGE="No significant changes detected."
+          fi
           echo "SLACK_MESSAGE=${SLACK_MESSAGE}" >> $GITHUB_ENV
       - name: Slack Notification
         uses: rtCamp/action-slack-notify@v2
