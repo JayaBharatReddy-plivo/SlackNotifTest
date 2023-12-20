@@ -1,4 +1,4 @@
-name: Notify Slack on push
+name: Notify  Slack on push
 on:
   push:
     branches:
@@ -9,13 +9,10 @@ jobs:
     name: Notify Slack on pushes
     runs-on: ubuntu-latest
     steps:
-      - name: Debug
-        run: echo "INPUT_ARGS: $INPUT_ARGS"
-
-      - name: Notify Slack
-        uses: JayaBharatReddy-plivo/SlackNotifTest@test
+      - uses: JayaBharatReddy-plivo/SlackNotifTest@test
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
         with:
-          args: '{"channel":"C0483SB96MV","text":"Repository pushed"}'
+          # message to send to slack
+          args: '{\"channel\":\"C0483SB96MV\",\"text\":\"Repositorypushed\"}'
         if: success()
