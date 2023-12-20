@@ -18,19 +18,16 @@ jobs:
           for changed_file in ${{ steps.files.outputs.all }}; do
             echo "Do something with this ${changed_file}."
           done
+
+      - name: Set changed files to SLACK_MESSAGE
+        run: |
+          SLACK_MESSAGE=""
+          for changed_file in ${{ steps.files.outputs.all }}; do
+            SLACK_MESSAGE="${SLACK_MESSAGE}- ${changed_file}\n"
+          done
+          echo "SLACK_MESSAGE=${SLACK_MESSAGE}" >> $GITHUB_ENV
       - name: Slack Notification
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_NOTIFICATIONS_TOKEN }}
-        with:
-          {
-            'text': 'Pull Request changes:',
-            'attachments':
-              [
-                {
-                  'color': '#36a64f',
-                  'title': 'Changes in settings.py',
-                  'text': '$(for changed_file in ${{ steps.files.outputs.all }}; do echo "- ${changed_file}"; done)',
-                },
-              ],
-          }
+          SLACK_MESSAGE: ${{ env.SLACK_MESSAGE }}
