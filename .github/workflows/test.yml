@@ -12,7 +12,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
+      - name: Display commit information
+        run: |
+          echo "Base commit: ${{ github.event.before }}"
+          echo "Current commit: ${{ github.sha }}"
       - name: Get changed files
         id: changed-files
         run: |
