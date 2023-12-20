@@ -1,12 +1,18 @@
-on: push
-name: Slack Notification Demo
+name: Notify  Slack on push
+on:
+  push:
+    branches:
+      - 'omolade-ci'
+
 jobs:
-  slackNotification:
-    name: Slack Notification
+  notify_slack_push:
+    name: Notify Slack on pushes
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Slack Notification
-        uses: rtCamp/action-slack-notify@v2
+      - uses: abinoda/slack-action@master
         env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_NOTIFICATIONS_TOKEN }}
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+        with:
+          # message to send to slack
+          args: '{\"channel\":\"${{ secrets.SLACK_CHANNEL_ID }}\",\"blocks\":[{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*Repository pushed to:* ${{ github.event.repository.name }}\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*Pusher:* ${{ github.event.pusher.name }}\n*Commit Message:* ${{ github.event.head_commit.message }}\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"<${{ github.event.repository.html_url }}|View Repository>\"}}]}'
+        if: success()
