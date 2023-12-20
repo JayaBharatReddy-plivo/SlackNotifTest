@@ -1,9 +1,6 @@
 name: Pull request on Master branch
 
 on:
-  pull_request:
-    branches:
-      - 'main'
   push:
     branches:
       - 'test'
