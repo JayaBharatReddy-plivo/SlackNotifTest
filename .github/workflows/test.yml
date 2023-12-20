@@ -16,6 +16,12 @@ jobs:
         run: |
           echo "Base commit: ${{ github.event.pull_request.base.sha }}"
           echo "Current commit: ${{ github.event.pull_request.head.sha }}"
+      - name: Display commit history
+        run: |
+          git log
+          echo "Base commit: ${{ github.event.pull_request.base.sha }}"
+          echo "Head commit: ${{ github.event.pull_request.head.sha }}"
+
       - name: Get changed files
         id: changed-files
         run: |
