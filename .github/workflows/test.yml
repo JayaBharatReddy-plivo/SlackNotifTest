@@ -12,28 +12,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Display commit information
-        run: |
-          echo "Base commit: ${{ github.event.pull_request.base.sha }}"
-          echo "Current commit: ${{ github.event.pull_request.head.sha }}"
-      - name: Display commit history
-        run: |
-          git log
-          echo "Base commit: ${{ github.event.pull_request.base.sha }}"
-          echo "Head commit: ${{ github.event.pull_request.head.sha }}"
-
-      - name: Get changed files
-        id: changed-files
-        run: |
-          echo "Changed files:"
-          git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} > changed_files.txt
-          cat changed_files.txt
-
-      - name: Display changes
-        run: |
-          echo "Changes in settings.py:"
-          cat $(cat changed_files.txt | grep settings.py)
-
+      - id: files
+        uses: jitterbit/get-changed-files@v1
+      - run: |
+          for changed_file in ${{ steps.files.outputs.all }}; do
+            echo "Do something with this ${changed_file}."
+          done
       - name: Slack Notification
         uses: rtCamp/action-slack-notify@v2
         env:
@@ -46,7 +30,7 @@ jobs:
                 {
                   "color": "#36a64f",
                   "title": "Changes in settings.py",
-                  "text": "$(cat $(cat changed_files.txt | grep settings.py))"
+                  "text": "$(for changed_file in ${{ steps.files.outputs.all }}; do echo \"- ${changed_file}\"; done)"
                 }
               ]
             }
