@@ -1,5 +1,5 @@
 FROM node:20
-COPY . /src
-RUN cd /src && npm install
+WORKDIR /src
+RUN npm install
 EXPOSE 4000
-CMD ["node", "/src/server.js"]
+CMD ["node", "server.js"]
