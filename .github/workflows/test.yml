@@ -1,4 +1,4 @@
-name: Notify  Slack on push
+name: Pull request on Master branch
 
 on:
   pull_request:
@@ -39,5 +39,6 @@ jobs:
       - name: Slack Notification
         uses: rtCamp/action-slack-notify@v2
         env:
+          SLACK_ICON: https://github.com/rtCamp.png?size=48
           SLACK_WEBHOOK: ${{ secrets.SLACK_NOTIFICATIONS_TOKEN }}
           SLACK_MESSAGE: ${{ env.SLACK_MESSAGE }}
