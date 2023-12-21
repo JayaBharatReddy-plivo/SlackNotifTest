@@ -69,7 +69,6 @@ jobs:
           else
             echo "SLACK_MESSAGE=\"\$file was changed, but not ci/settings.py.ctmpl\"" >> $GITHUB_OUTPUT
           fi
-          done
       - name: Slack Notification
         uses: rtCamp/action-slack-notify@v2
         env:
