@@ -67,7 +67,7 @@ jobs:
           if [[ -n "$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | grep 'ci/settings.py.ctmpl')" ]]; then
             echo "SLACK_MESSAGE=$(git diff ${{ github.event.before }} ${{ github.event.after }} -- 'ci/settings.py.ctmpl')" >> $GITHUB_OUTPUT
           else
-            echo "SLACK_MESSAGE=\"\$file was changed, but not ci/settings.py.ctmpl\" >> $GITHUB_OUTPUT
+            echo "SLACK_MESSAGE=\"\$file was changed, but not ci/settings.py.ctmpl\"" >> $GITHUB_OUTPUT
           fi
           done
       - name: Slack Notification
