@@ -67,7 +67,7 @@ jobs:
           if [[ -n "$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | grep 'ci/settings.py.ctmpl')" ]]; then
             echo "$(git diff --unified=0 ${{ github.event.before }} ${{ github.event.after }} -- 'ci/settings.py.ctmpl')"
             changes=$(git diff --unified=0 ${{ github.event.before }} ${{ github.event.after }} -- 'ci/settings.py.ctmpl')
-            echo "::set-output name=SLACK_MESSAGE::$(echo -e "$changes" | printf '%q')"
+            echo "::set-output name=SLACK_MESSAGE::$(echo "$changes" | awk '{printf "%s\\n", $0}')"
           else
             echo "::set-output name=SLACK_MESSAGE::\$file was changed, but not ci/settings.py.ctmpl"
           fi
