@@ -50,19 +50,29 @@ jobs:
       #       echo "SLACK_MESSAGE=No changes detected in ci/settings.py.ctmpl" >> $GITHUB_ENV
       #     fi
 
-      - name: Set Slack message based on changes
-        run: |
-          for file in ${{ steps.changed-files.outputs.changed_files }}; do
-              if [ "$file" = "ci/settings.py.ctmpl" ]; then
-                  SLACK_MESSAGE="$(git diff ${{ github.event.before }} ${{ github.event.after }} -- "$file")"
-              else
-                  SLACK_MESSAGE="$file was changed, but not ci/settings.py.ctmpl"
-              fi
-              echo "SLACK_MESSAGE=${SLACK_MESSAGE}" >> $GITHUB_ENV
-          done
+      # - name: Set Slack message based on changes
+      #   run: |
+      #     for file in ${{ steps.changed-files.outputs.changed_files }}; do
+      #         if [ "$file" = "ci/settings.py.ctmpl" ]; then
+      #             SLACK_MESSAGE="$(git diff ${{ github.event.before }} ${{ github.event.after }} -- "$file")"
+      #         else
+      #             SLACK_MESSAGE="$file was changed, but not ci/settings.py.ctmpl"
+      #         fi
+      #         echo "SLACK_MESSAGE=${SLACK_MESSAGE}" >> $GITHUB_ENV
+      #     done
+
+        - name: Set Slack message based on changes
+          id: set-slack-message
+          run: |
+            if [[ -n "$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | grep 'ci/settings.py.ctmpl')" ]]; then
+              echo "SLACK_MESSAGE=$(git diff ${{ github.event.before }} ${{ github.event.after }} -- 'ci/settings.py.ctmpl')" >> $GITHUB_OUTPUT
+            else
+              echo "SLACK_MESSAGE="$file was changed, but not ci/settings.py.ctmpl" >> $GITHUB_OUTPUT
+            fi
+            done
       - name: Slack Notification
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_ICON: https://github.com/rtCamp.png?size=48
           SLACK_WEBHOOK: ${{ secrets.SLACK_NOTIFICATIONS_TOKEN }}
-          # SLACK_MESSAGE: ${{ env.SLACK_MESSAGE }}
+          SLACK_MESSAGE: ${{ steps.set-slack-message.outputs.SLACK_MESSAGE }}
