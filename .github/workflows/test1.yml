@@ -53,5 +53,5 @@ jobs:
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_ICON: https://github.com/rtCamp.png?size=48
-          SLACK_WEBHOOK: https://hooks.slack.com/services/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
+          SLACK_WEBHOOK: ${{ secrets.SLACK_NOTIFICATIONS_TOKEN }}
           SLACK_MESSAGE: ${{ env.SLACK_MESSAGE }}
