@@ -3,7 +3,7 @@ name: Pull request on test branch for FINSYS-2564
 on:
   push:
     branches:
-      - 'test'
+      - 'test1'
 
 jobs:
   slackNotification:
