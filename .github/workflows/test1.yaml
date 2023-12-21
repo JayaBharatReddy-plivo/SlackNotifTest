@@ -24,9 +24,11 @@ jobs:
       - name: List changed files
         run: |
           for file in ${{ steps.changed-files.outputs.changed_files }}; do
-              echo "$file was changed"
-              if [ -f "$file" ]; then
-                  echo "Changes in $file:"
+              if [ "$file" = "ci/settings.py.ctmpl" ]; then
+                  echo "ci/settings.py.ctmpl was changed"
+                  echo "Changes in ci/settings.py.ctmpl:"
                   git diff ${{ github.event.before }} ${{ github.event.after }} -- "$file"
+              else
+                  echo "$file was changed, but not ci/settings.py.ctmpl"
               fi
           done
