@@ -21,6 +21,16 @@ jobs:
           else
               echo "changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | xargs)" >> $GITHUB_OUTPUT
           fi
+      - name: List changed files
+        run: |
+          for file in ${{ steps.changed-files.outputs.changed_files }}; do
+              if [ "$file" = "ci/settings.py.ctmpl" ]; then
+                  echo "ci/settings.py.ctmpl was changed"
+                  git diff ${{ github.event.before }} ${{ github.event.after }} -- "$file"
+              else
+                  echo "$file was changed, but not ci/settings.py.ctmpl"
+              fi
+          done
       - name: Set Slack message based on changes
         run: |
           for file in ${{ steps.changed-files.outputs.changed_files }}; do
