@@ -1,0 +1,33 @@
+name: Pull request on test branch for FINSYS-2564 test 1
+
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - 'test'
+
+jobs:
+  if_merged:
+    name: Slack Notification
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Set Slack message based on changes
+        id: set-slack-message
+        run: |
+          if [[ -n "$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | grep 'ci/settings.py.ctmpl')" ]]; then
+            echo "$(git diff --unified=0 ${{ github.event.before }} ${{ github.event.after }} -- 'ci/settings.py.ctmpl')"
+            changes=$(git diff --unified=0 ${{ github.event.before }} ${{ github.event.after }} -- 'ci/settings.py.ctmpl')
+            echo "::set-output name=SLACK_MESSAGE::$(echo "$changes" | awk '{printf "%s\\n", $0}')"
+          else
+            echo "::set-output name=SLACK_MESSAGE::Other files were changed, but not ci/settings.py.ctmpl"
+          fi
+      - name: Slack Notification
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_ICON: https://github.com/rtCamp.png?size=48
+          SLACK_WEBHOOK: ${{ secrets.SLACK_NOTIFICATIONS_TOKEN }}
+          SLACK_MESSAGE: ${{ steps.set-slack-message.outputs.SLACK_MESSAGE }}

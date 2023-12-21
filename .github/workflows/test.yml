@@ -1,0 +1,45 @@
+name: Pull request on Master branch
+
+on:
+  push:
+    branches:
+      - 'test'
+
+jobs:
+  slackNotification:
+    name: Slack Notification
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - id: files
+
+        uses: jitterbit/get-changed-files@v1
+      - run: |
+          for changed_file in ${{ steps.files.outputs.all }}; do
+            echo "Do something with this ${changed_file}."
+          done
+
+      - name: Check if settings.py is changed
+        run: |
+          if echo "${{ steps.files.outputs.all }}" | grep -q "settings.py"; then
+            SETTINGS_CHANGED=true
+          else
+            SETTINGS_CHANGED=false
+          fi
+          echo "SETTINGS_CHANGED=${SETTINGS_CHANGED}" >> $GITHUB_ENV
+
+      - name: Set Slack message based on changes
+        run: |
+          if [ "${{ env.SETTINGS_CHANGED }}" = "true" ]; then
+            SLACK_MESSAGE="Settings.py file has been changed."
+          else
+            SLACK_MESSAGE="No significant changes detected."
+          fi
+          echo "SLACK_MESSAGE=${SLACK_MESSAGE}" >> $GITHUB_ENV
+      - name: Slack Notification
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_ICON: https://github.com/rtCamp.png?size=48
+          SLACK_WEBHOOK: ${{ secrets.SLACK_NOTIFICATIONS_TOKEN }}
+          SLACK_MESSAGE: ${{ env.SLACK_MESSAGE }}
