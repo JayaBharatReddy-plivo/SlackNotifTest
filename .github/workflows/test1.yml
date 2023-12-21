@@ -68,7 +68,6 @@ jobs:
             echo "$(git diff ${{ github.event.before }} ${{ github.event.after }} -- 'ci/settings.py.ctmpl')"
             changes=$(git diff ${{ github.event.before }} ${{ github.event.after }} -- 'ci/settings.py.ctmpl')
             echo "::set-output name=SLACK_MESSAGE::$(echo -e "$changes" | printf '%q')"
-            echo "SLACK_MESSAGE=$(git diff ${{ github.event.before }} ${{ github.event.after }} -- 'ci/settings.py.ctmpl')" >> $GITHUB_OUTPUT
           else
             echo "SLACK_MESSAGE=\"\$file was changed, but not ci/settings.py.ctmpl\"" >> $GITHUB_OUTPUT
           fi
