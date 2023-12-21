@@ -33,14 +33,22 @@ jobs:
           done
       - name: Set Slack message based on changes
         run: |
-          for file in ${{ steps.changed-files.outputs.changed_files }}; do
-              if [ "$file" = "ci/settings.py.ctmpl" ]; then
-                  SLACK_MESSAGE="ci/settings.py.ctmpl was changed\nChanges in ci/settings.py.ctmpl:\n$(git diff ${{ github.event.before }} ${{ github.event.after }} -- "$file")"
-              else
-                  SLACK_MESSAGE="$file was changed, but not ci/settings.py.ctmpl"
-              fi
-              echo "SLACK_MESSAGE=${SLACK_MESSAGE}" >> $GITHUB_ENV
-          done
+          if [[ -n "$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | grep 'ci/settings.py.ctmpl')" ]]; then
+            echo "SLACK_MESSAGE=ci/settings.py.ctmpl was changed\nChanges in ci/settings.py.ctmpl:\n$(git diff ${{ github.event.before }} ${{ github.event.after }} -- 'ci/settings.py.ctmpl')" >> $GITHUB_ENV
+          else
+            echo "SLACK_MESSAGE=No changes detected in ci/settings.py.ctmpl" >> $GITHUB_ENV
+          fi
+
+      # - name: Set Slack message based on changes
+      #   run: |
+      #     for file in ${{ steps.changed-files.outputs.changed_files }}; do
+      #         if [ "$file" = "ci/settings.py.ctmpl" ]; then
+      #             SLACK_MESSAGE="ci/settings.py.ctmpl was changed\nChanges in ci/settings.py.ctmpl:\n$(git diff ${{ github.event.before }} ${{ github.event.after }} -- "$file")"
+      #         else
+      #             SLACK_MESSAGE="$file was changed, but not ci/settings.py.ctmpl"
+      #         fi
+      #         echo "SLACK_MESSAGE=${SLACK_MESSAGE}" >> $GITHUB_ENV
+      #     done
       - name: Slack Notification
         uses: rtCamp/action-slack-notify@v2
         env:
